@@ -1,0 +1,21 @@
+[project]
+name = "mc-labelguard"
+version = "0.1.0"
+description = "P2 LabelGuard 标签哨兵：标签/说明书合规审核（必标项引擎 + 审核门禁）"
+requires-python = ">=3.11"
+dependencies = [
+    "mc-domain",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "httpx>=0.27",
+]
+
+[tool.uv.sources]
+mc-domain = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mc_labelguard"]
