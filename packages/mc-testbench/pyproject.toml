@@ -1,0 +1,9 @@
+[project]
+name = "mc-testbench"
+version = "0.1.0"
+description = "评测运行管理与回归检测：记录每次评测、对比两次运行、把退化挡在合并前"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -34,6 +34,27 @@ python scripts/serve_web.py         # :5180  ← 打开这个
 > 前端刻意零构建：为一张演示页引 100MB `node_modules` 不划算，
 > 而三个服务才是重点。产品化时换 Vue + nginx，接口层不用改。
 
+**测试中台**：`packages/mc-testbench`。它解决的不是"跑评测"，是**"知道有没有变差"**。
+
+```bash
+python scripts/testbench.py run labels --mode fields
+python scripts/testbench.py run labels --mode text
+python scripts/testbench.py compare <base_run_id> <head_run_id>
+```
+
+```
+指标          基线    当前    变化     判定
+------------  ------  ------  -------  ------
+召回率        100.0%   80.0%  -20.0pp  ▼ 退化
+→ 2 项退化
+→ 退出码 1（存在退化，建议阻断合并）
+```
+
+退出码 **0** 无退化 / **1** 有退化 / **2** 不可比。三个刻意设计：指标方向是**声明**的
+（`undeterminable_rate` 越低越好，不能默认"越大越好"）、浮点有容差（否则在噪声上报警、
+然后被人关掉）、**任务或数据指纹不同时拒绝比较**（把两次不同数据上的评测并排比，
+它不报错，只给错结论）。
+
 ---
 
 ## 1. 为什么是一个仓库
