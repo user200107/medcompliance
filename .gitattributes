@@ -1,0 +1,20 @@
+# 文本文件统一用 LF 存库。Windows 上 checkout 也不转 CRLF，
+# 这样跨平台协作不会因为换行符产生整文件 diff。
+* text=auto eol=lf
+
+# 二进制：禁止换行转换与文本 diff
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.pdf  binary
+*.npz  binary
+*.zip  binary
+
+# 抓取数据与向量索引（正常情况下已被 .gitignore 排除，这里再兜一层）
+*.jsonl -text
+*.npz   -text
+
+# Windows 批处理保持 CRLF，否则某些解释器会出问题
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
