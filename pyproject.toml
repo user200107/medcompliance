@@ -1,0 +1,14 @@
+[project]
+name = "medcompliance-suite"
+version = "0.1.0"
+description = "医疗器械合规智能体套件：一个法规知识底座 + 三个面向不同岗位的应用"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["packages"]
+python_files = ["test_*.py"]
+addopts = "-q"

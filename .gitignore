@@ -1,0 +1,42 @@
+# --- 密钥与本地配置 ---
+.env
+*.env
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# --- 数据与产物 ---
+# 真实的法规原文、分类目录、标签图片、申报卷宗都不进版本库
+data/raw/
+data/processed/
+*.sqlite3
+*.db
+uploads/
+models/
+reports/
+
+# --- 前端 ---
+node_modules/
+dist/
+.vite/
+
+# --- 编辑器 / 系统 ---
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,49 @@
+name: medcompliance
+
+# 默认 `docker compose up -d` 只起已实现的 P1。
+# 起全部：docker compose --profile all up -d
+# 只起某个占位服务：docker compose --profile labelguard up -d
+#
+# 三个服务共享同一个构建上下文（仓库根），因为它们都依赖 packages/mc-domain。
+# 拆成三个仓库的话，这份底座要么复制三遍，要么发私有包——单仓库正是为了避免这个。
+
+services:
+  medireg:
+    build:
+      context: .
+      dockerfile: packages/mc-medireg/Dockerfile
+    image: medcompliance/mc-medireg:0.1.0
+    ports:
+      - "127.0.0.1:8011:8011"
+    environment:
+      MC_CATALOG_VERSION: ${MC_CATALOG_VERSION:-sample-synthetic}
+      MC_NORMALIZER: ${MC_NORMALIZER:-heuristic}
+      MC_LLM_BASE_URL: ${MC_LLM_BASE_URL:-}
+      MC_LLM_API_KEY: ${MC_LLM_API_KEY:-}
+      MC_LLM_MODEL: ${MC_LLM_MODEL:-qwen-plus}
+      MC_DEBUG: ${MC_DEBUG:-false}
+    restart: unless-stopped
+
+  labelguard:
+    profiles: ["labelguard", "all"]
+    build:
+      context: .
+      dockerfile: packages/mc-labelguard/Dockerfile
+    image: medcompliance/mc-labelguard:0.0.0
+    ports:
+      - "127.0.0.1:8012:8012"
+    environment:
+      MC_DEBUG: ${MC_DEBUG:-false}
+    restart: unless-stopped
+
+  dossier:
+    profiles: ["dossier", "all"]
+    build:
+      context: .
+      dockerfile: packages/mc-dossier/Dockerfile
+    image: medcompliance/mc-dossier:0.0.0
+    ports:
+      - "127.0.0.1:8013:8013"
+    environment:
+      MC_DEBUG: ${MC_DEBUG:-false}
+    restart: unless-stopped
