@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedCompliance Suite · 产品档案</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#161d2d; --panel2:#1c2436; --line:#2a3448;
+    --text:#e6ebf5; --muted:#94a3b8; --accent:#5b9dff;
+    --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#a78bfa;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}
+  header{padding:20px 24px 14px;border-bottom:1px solid var(--line);display:flex;
+    align-items:baseline;gap:16px;flex-wrap:wrap}
+  h1{font-size:17px;margin:0;letter-spacing:.3px}
+  header .sub{color:var(--muted);font-size:12.5px}
+  .svc{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);
+    color:var(--muted);background:var(--panel2);white-space:nowrap}
+  .pill.up{color:var(--ok);border-color:#1f5b45}
+  .pill.down{color:var(--bad);border-color:#6b2b2b}
+  main{padding:20px 24px 60px;max-width:1180px;margin:0 auto;display:grid;gap:18px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  section > h2{font-size:14px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  .tag{font:600 11px/1 var(--mono);padding:3px 7px;border-radius:6px;background:#20304d;
+    color:var(--accent);letter-spacing:.5px}
+  .hint{color:var(--muted);font-size:12.5px;margin:0 0 12px}
+  textarea{width:100%;background:#0c111b;color:var(--text);border:1px solid var(--line);
+    border-radius:8px;padding:10px;font-family:var(--mono);font-size:12.5px;resize:vertical}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  button{background:#20304d;color:var(--text);border:1px solid #2f4467;border-radius:8px;
+    padding:7px 14px;cursor:pointer;font-size:13px}
+  button:hover{background:#27395c}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#08111f;font-weight:600}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  select,input[type=text]{background:#0c111b;color:var(--text);border:1px solid var(--line);
+    border-radius:8px;padding:6px 9px;font-size:13px}
+  .result{margin-top:14px;display:grid;gap:12px}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .card h3{font-size:12.5px;margin:0 0 8px;color:var(--muted);font-weight:600;letter-spacing:.4px}
+  .big{font-size:22px;font-weight:700;letter-spacing:.5px}
+  /* 类名一律小写：JS 侧用 outcome.toLowerCase() 生成，
+     CSS 选择器在 HTML 文档里大小写敏感，写 .outcome-III 是匹配不上的 */
+  .outcome-i{color:var(--ok)} .outcome-ii{color:var(--warn)} .outcome-iii{color:var(--bad)}
+  .outcome-not_a_device{color:var(--info)}
+  ul{margin:0;padding-left:18px} li{margin:3px 0}
+  .kv{display:grid;grid-template-columns:96px 1fr;gap:4px 10px;font-size:13px}
+  .kv dt{color:var(--muted)} .kv dd{margin:0;font-family:var(--mono);font-size:12.5px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;letter-spacing:.3px}
+  .st{font:600 11px/1 var(--mono);padding:3px 7px;border-radius:6px;white-space:nowrap}
+  .st-compliant{background:#12352a;color:var(--ok)}
+  .st-violation{background:#3b1919;color:var(--bad)}
+  .st-undeterminable{background:#3a2f12;color:var(--warn)}
+  .st-high{background:#3b1919;color:var(--bad)}
+  .st-medium{background:#3a2f12;color:var(--warn)}
+  .st-low{background:#1e293b;color:var(--muted)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font:600 11px/1 var(--mono);padding:4px 8px;border-radius:999px;
+    background:#2a1f3d;color:var(--info);border:1px solid #3d2f57}
+  .steps{counter-reset:s;display:grid;gap:6px}
+  .step{display:grid;grid-template-columns:22px 92px 1fr;gap:8px;font-size:12.5px;align-items:baseline}
+  .step::before{counter-increment:s;content:counter(s);color:var(--muted);font-family:var(--mono);font-size:11px}
+  .step .stage{font-family:var(--mono);font-size:11.5px;color:var(--accent)}
+  .rejected{font-size:12.5px;color:var(--muted)}
+  .rejected b{color:var(--bad);font-family:var(--mono);font-weight:600}
+  .err{color:var(--bad);font-size:12.5px;white-space:pre-wrap}
+  .caveat{font-size:12px;color:var(--muted);border-left:2px solid var(--line);padding-left:10px;margin:4px 0}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+  .muted{color:var(--muted)}
+  .snap{font-family:var(--mono);font-size:11.5px;color:var(--ok)}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:0 24px 30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>MedCompliance Suite · 产品档案</h1>
+  <span class="sub">一个法规底座 · 三个岗位 · 三条不同的失败模式</span>
+  <div class="svc" id="svc"></div>
+</header>
+
+<main>
+  <!-- P1 -->
+  <section>
+    <h2><span class="tag">P1</span>注册路径判定 <span class="muted" style="font-weight:400;font-size:12.5px">注册专员 / 研发</span></h2>
+    <p class="hint">输入产品描述。判定走确定性规则，模型只负责把描述翻译成结构化槽位。</p>
+    <textarea id="p1-in" rows="3"></textarea>
+    <div class="row">
+      <label class="muted">风险偏好</label>
+      <select id="p1-risk">
+        <option value="strict">strict（不偏向）</option>
+        <option value="balanced" selected>balanced（默认）</option>
+        <option value="risk_averse">risk_averse（偏保守）</option>
+        <option value="max_recall_iii">max_recall_iii（最大 Ⅲ 类召回）</option>
+      </select>
+      <button class="primary" id="p1-go">判定</button>
+      <button id="p1-demo">示例：超声手术刀</button>
+      <button id="p1-ambiguous">示例：会有歧义（走追问）</button>
+    </div>
+    <div class="result" id="p1-out"></div>
+  </section>
+
+  <!-- P2 -->
+  <section>
+    <h2><span class="tag">P2</span>标签合规审核 <span class="muted" style="font-weight:400;font-size:12.5px">QA / 质量部</span></h2>
+    <p class="hint">逐项核对必标项。三态判定：合规 / 违规 / <b>不可判定</b>（看不清不算违规）。AI 只出草稿，须审核员署名确认。</p>
+    <textarea id="p2-in" rows="9"></textarea>
+    <div class="row">
+      <button class="primary" id="p2-go">送审</button>
+      <button id="p2-demo">填入完整标签</button>
+      <button id="p2-broken">填入缺项标签</button>
+    </div>
+    <div class="result" id="p2-out"></div>
+  </section>
+
+  <!-- P3 -->
+  <section>
+    <h2><span class="tag">P3</span>卷宗一致性审查 <span class="muted" style="font-weight:400;font-size:12.5px">RA 顾问</span></h2>
+    <p class="hint">三份文件里的同一属性是否一致。<b>写法不同不算冲突</b>（Ø3.20 mm vs 3.2mm），实质不同才算（3.20 vs 3.50）。</p>
+    <div class="grid3">
+      <div><div class="muted" style="font-size:12px;margin-bottom:6px">产品技术要求</div>
+        <textarea id="p3-a" rows="7">型号规格：A-100
+关键尺寸：Ø3.20 mm
+灭菌方式：环氧乙烷灭菌
+有效期：3年
+结构组成：由针筒、推杆、活塞、针头组成
+生产地址：江苏省苏州市工业园区某路1号</textarea></div>
+      <div><div class="muted" style="font-size:12px;margin-bottom:6px">说明书</div>
+        <textarea id="p3-b" rows="7">型号规格：A-100
+有效期：36个月
+灭菌方式：环氧乙烷
+生产地址：江苏省苏州市工业园区某路1号</textarea></div>
+      <div><div class="muted" style="font-size:12px;margin-bottom:6px">检验报告</div>
+        <textarea id="p3-c" rows="7">型号规格：A-100
+关键尺寸：Ø3.50 mm
+灭菌方式：EO</textarea></div>
+    </div>
+    <div class="row">
+      <button class="primary" id="p3-go">审查</button>
+      <button id="p3-fix">修好冲突（3.50 → 3.20）</button>
+    </div>
+    <div class="result" id="p3-out"></div>
+  </section>
+</main>
+
+<footer>三个服务独立部署：P1 :8011 · P2 :8012 · P3 :8013　|　本页零构建，只有 HTML/CSS/JS</footer>
+
+<script>
+const qs = new URLSearchParams(location.search);
+const API = {
+  p1: qs.get('p1') || 'http://127.0.0.1:8011',
+  p2: qs.get('p2') || 'http://127.0.0.1:8012',
+  p3: qs.get('p3') || 'http://127.0.0.1:8013',
+};
+
+const SAMPLE_LABEL = `产品名称：医用外科口罩
+型号规格：17.5cm×9.5cm
+注册人名称：某医疗器械有限公司
+注册人住所：江苏省苏州市某路1号
+联系方式：0512-12345678
+医疗器械注册证编号：国械注准20243010123
+生产日期：2026-01-01
+失效日期：2029-01-01
+贮存条件：常温干燥处保存
+UDI：(01)06931234567890
+无菌
+一次性使用
+注意事项：用后销毁
+使用说明书`;
+
+const BROKEN_LABEL = SAMPLE_LABEL.replace('医疗器械注册证编号：国械注准20243010123\n', '')
+                                 .replace('UDI：(01)06931234567890\n', 'UDI：(01)0693\n');
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+async function post(url, body) {
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body),
+  });
+  const text = await r.text();
+  let data; try { data = text ? JSON.parse(text) : {}; } catch { data = {raw: text}; }
+  if (!r.ok) {
+    const msg = data?.detail?.message || data?.detail?.code || r.status + ' ' + r.statusText;
+    throw new Error(`${r.status}: ${msg}`);
+  }
+  return data;
+}
+
+async function get(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`${r.status}`);
+  return r.json();
+}
+
+// ---------- 服务状态 ----------
+async function probe() {
+  const out = $('svc');
+  const names = [['P1', API.p1], ['P2', API.p2], ['P3', API.p3]];
+  out.innerHTML = names.map(([n]) => `<span class="pill" id="pill-${n}">${n} 检测中…</span>`).join('');
+  for (const [n, base] of names) {
+    const el = $('pill-' + n);
+    try {
+      const h = await get(base + '/healthz');
+      el.className = 'pill up';
+      el.textContent = `${n} 在线`;
+      el.title = JSON.stringify(h);
+    } catch (e) {
+      el.className = 'pill down';
+      el.textContent = `${n} 离线`;
+      el.title = String(e);
+    }
+  }
+}
+
+// ---------- P1 ----------
+function renderP1(r) {
+  const o = r.outcome || (r.best && r.best.management_class) || '—';
+  const cls = String(o).toLowerCase().replace('not_a_device', 'not_a_device');
+  const parts = [];
+
+  parts.push(`<div class="card">
+    <h3>结论</h3>
+    <div class="big outcome-${esc(cls)}">${o === 'not_a_device' ? '不作为医疗器械' : esc(o) + (o !== '—' ? ' 类' : '')}</div>
+    <div class="muted" style="font-size:12.5px;margin-top:4px">
+      status=${esc(r.status)} · 引擎=${esc(r.engine)} · 风险偏好=${esc(r.risk_preference)} · ${r.elapsed_ms}ms
+    </div>
+  </div>`);
+
+  if (r.best) {
+    parts.push(`<div class="card"><h3>命中类别</h3>
+      <dl class="kv">
+        <dt>分类编码</dt><dd>${esc(r.best.code)}</dd>
+        <dt>类别路径</dt><dd>${esc(r.best.name_path)}</dd>
+        <dt>检索分</dt><dd>${Number(r.best.score).toFixed(4)}</dd>
+      </dl>
+      ${(r.best.evidence || []).map(e => `<div class="caveat">[${esc(e.kind)}] ${esc(e.text)}</div>`).join('')}
+    </div>`);
+  }
+
+  if (r.unconfirmed && r.unconfirmed.length) {
+    parts.push(`<div class="card"><h3>未确认的判定维度</h3>
+      <div class="chips">${r.unconfirmed.map(u => `<span class="chip">${esc(u)}</span>`).join('')}</div>
+      <div class="caveat" style="margin-top:8px">这些维度不参与检索；缺省时仍给结论，但可能落到相邻类别。</div>
+    </div>`);
+  }
+
+  if (r.steps && r.steps.length) {
+    parts.push(`<div class="card"><h3>判定路径（依据链）</h3><div class="steps">
+      ${r.steps.map(s => `<div class="step"><span class="stage">${esc(s.stage)}</span>
+        <span>${esc(s.summary)}${s.rule_key ? ` <span class="chip">${esc(s.rule_key)}</span>` : ''}</span></div>`).join('')}
+    </div></div>`);
+  }
+
+  if (r.rejected && r.rejected.length) {
+    parts.push(`<div class="card"><h3>已被排除的候选</h3>
+      ${r.rejected.map(x => `<div class="rejected"><b>× ${esc(x.code)}</b> ${esc(x.name)} —— ${esc(x.reason)}
+        <div class="caveat">${esc(x.evidence?.text || '')}</div></div>`).join('')}
+    </div>`);
+  }
+
+  if (r.missing_slots && r.missing_slots.length) {
+    parts.push(`<div class="card"><h3>建议补充</h3>
+      ${r.missing_slots.map(s => `<div class="caveat">${esc(s.question)}
+        ${(s.options||[]).length ? `<br><span class="muted">可选：${s.options.map(esc).join(' / ')}</span>` : ''}</div>`).join('')}
+    </div>`);
+  }
+
+  if (r.caveats && r.caveats.length) {
+    parts.push(`<div class="card"><h3>自检提示</h3>
+      ${r.caveats.map(c => `<div class="caveat">${esc(c)}</div>`).join('')}</div>`);
+  }
+
+  $('p1-out').innerHTML = parts.join('');
+}
+
+// ---------- P2 ----------
+let lastDraft = null;
+
+function renderP2(r) {
+  lastDraft = r;
+  const rev = r.review;
+  const parts = [];
+
+  parts.push(`<div class="card">
+    <h3>审核结论（草稿）</h3>
+    <div class="big"><span class="st st-${esc(rev.risk_level)}">风险 ${esc(rev.risk_level)}</span></div>
+    <div class="muted" style="font-size:12.5px;margin-top:8px">
+      合规 ${rev.compliant} · 违规 ${rev.violations} · 不可判定 ${rev.undeterminable}
+      · 草稿 ${esc(r.draft_id)} r${r.revision} · review_required=${rev.review_required}
+    </div>
+  </div>`);
+
+  parts.push(`<div class="card"><h3>逐项检查表</h3>
+    <table><thead><tr><th>检查项</th><th>状态</th><th>说明</th><th>依据</th></tr></thead><tbody>
+    ${rev.items.map(i => `<tr>
+      <td>${esc(i.label)}${i.required ? '' : ' <span class="muted">(非强制)</span>'}</td>
+      <td><span class="st st-${esc(i.status)}">${esc(i.status)}</span></td>
+      <td>${esc(i.reason)}</td>
+      <td class="muted">${esc(i.clause)}</td>
+    </tr>`).join('')}
+    </tbody></table></div>`);
+
+  if (rev.caveats && rev.caveats.length) {
+    parts.push(`<div class="card"><h3>声明</h3>
+      ${rev.caveats.map(c => `<div class="caveat">${esc(c)}</div>`).join('')}</div>`);
+  }
+
+  parts.push(`<div class="card"><h3>审核员确认（必须署名）</h3>
+    <div class="row">
+      <input type="text" id="p2-reviewer" placeholder="审核员姓名" value="张审核">
+      <input type="text" id="p2-note" placeholder="复核意见（可选）">
+      <button class="primary" id="p2-confirm">确认并出具报告</button>
+    </div>
+    <div class="muted" style="font-size:12px;margin-top:8px">
+      确认后生成不可变快照；基于旧 revision 的重复确认会返回 409。
+    </div>
+    <div id="p2-snap" style="margin-top:10px"></div>
+  </div>`);
+
+  $('p2-out').innerHTML = parts.join('');
+  $('p2-confirm').onclick = confirmDraft;
+}
+
+async function confirmDraft() {
+  if (!lastDraft) return;
+  const reviewer = ($('p2-reviewer').value || '').trim();
+  const note = ($('p2-note').value || '').trim();
+  try {
+    const snap = await post(`${API.p2}/api/v1/labels/drafts/${lastDraft.draft_id}/confirm`,
+      {reviewer, revision: lastDraft.revision, note: note || null});
+    $('p2-snap').innerHTML = `<div class="card">
+      <h3>已出具（不可变快照）</h3>
+      <div class="snap">status=${esc(snap.status)} · revision=${snap.revision} · reviewer=${esc(snap.reviewer)}</div>
+      <div class="muted" style="font-size:12px;margin-top:6px">
+        immutable=${snap.snapshot.immutable} · confirmed_at=${esc(snap.snapshot.confirmed_at)}</div>
+    </div>`;
+  } catch (e) {
+    $('p2-snap').innerHTML = `<div class="err">${esc(e.message)}</div>`;
+  }
+}
+
+// ---------- P3 ----------
+function renderP3(r) {
+  const parts = [];
+  parts.push(`<div class="card">
+    <h3>审查结论</h3>
+    <div class="big">冲突 ${r.conflicts} · 缺项 ${r.missing_docs.length}</div>
+    <div class="muted" style="font-size:12.5px;margin-top:6px">
+      一致属性 ${r.consistent_attributes.length} · 无法核对 ${r.unverifiable.length}
+      · review_required=${r.review_required}
+    </div>
+  </div>`);
+
+  if (r.findings.length) {
+    parts.push(`<div class="card"><h3>跨文档冲突</h3>
+      <table><thead><tr><th>属性</th><th>等级</th><th>各文件写法</th></tr></thead><tbody>
+      ${r.findings.map(f => `<tr>
+        <td>${esc(f.label)}</td>
+        <td><span class="st st-${esc(f.severity)}">${esc(f.severity)}</span></td>
+        <td>${f.observations.map(o =>
+          `<div>${esc(o.doc_label)}：「<b>${esc(o.raw_value)}</b>」<span class="muted">→ ${esc(o.normalized_value)}</span></div>`).join('')}</td>
+      </tr>`).join('')}</tbody></table></div>`);
+  } else {
+    parts.push(`<div class="card"><h3>跨文档冲突</h3><div class="caveat">未发现冲突。</div></div>`);
+  }
+
+  const rows = [];
+  if (r.missing_docs.length) rows.push(['缺失章节', r.missing_docs.join('、')]);
+  if (r.consistent_attributes.length) rows.push(['一致（写法差异已归一化）', r.consistent_attributes.join('、')]);
+  if (r.unverifiable.length) rows.push(['无法核对（只有一份文件提及 / 归一化不出可比值）', r.unverifiable.join('、')]);
+  if (rows.length) {
+    parts.push(`<div class="card"><h3>其余属性</h3><dl class="kv">
+      ${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}
+    </dl></div>`);
+  }
+
+  if (r.caveats && r.caveats.length) {
+    parts.push(`<div class="card"><h3>声明</h3>
+      ${r.caveats.map(c => `<div class="caveat">${esc(c)}</div>`).join('')}</div>`);
+  }
+  $('p3-out').innerHTML = parts.join('');
+}
+
+// ---------- 绑定 ----------
+//: 能干净定类的示例。演示默认值必须是"走得通"的路径——
+//: 首次点击就展示"需要补充"，观感上等于系统答不出来。
+const P1_DEMO = '超声切割止血刀，由手柄、波导杆、套管组成，用于手术中对血管、软组织进行切割止血，有源，接触人体组织，无菌，一次性使用';
+
+//: 故意留一个会走追问的例子，用来演示"不确定就问"这个能力。
+const P1_AMBIGUOUS = '用于缓解肌肉疼痛的超声治疗设备，接触皮肤表面，需电源驱动';
+
+$('p1-demo').onclick = () => { $('p1-in').value = P1_DEMO; };
+$('p1-ambiguous').onclick = () => { $('p1-in').value = P1_AMBIGUOUS; };
+$('p1-go').onclick = async () => {
+  const desc = $('p1-in').value.trim();
+  $('p1-out').innerHTML = '<div class="muted">判定中…</div>';
+  try {
+    renderP1(await post(API.p1 + '/api/v1/classify', {description: desc, risk: $('p1-risk').value}));
+  } catch (e) { $('p1-out').innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+};
+
+$('p2-demo').onclick = () => { $('p2-in').value = SAMPLE_LABEL; };
+$('p2-broken').onclick = () => { $('p2-in').value = BROKEN_LABEL; };
+$('p2-go').onclick = async () => {
+  const text = $('p2-in').value.trim();
+  $('p2-out').innerHTML = '<div class="muted">审核中…</div>';
+  try { renderP2(await post(API.p2 + '/api/v1/labels/review', {text})); }
+  catch (e) { $('p2-out').innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+};
+
+$('p3-fix').onclick = () => {
+  $('p3-c').value = $('p3-c').value.replace('Ø3.50 mm', '3.2mm');
+};
+$('p3-go').onclick = async () => {
+  const docs = [
+    {doc_id: 't1', kind: 'technical_requirement', filename: '产品技术要求.docx', text: $('p3-a').value},
+    {doc_id: 't2', kind: 'ifu', filename: '说明书.docx', text: $('p3-b').value},
+    {doc_id: 't3', kind: 'test_report', filename: '检验报告.pdf', text: $('p3-c').value},
+  ].filter(d => d.text.trim());
+  $('p3-out').innerHTML = '<div class="muted">审查中…</div>';
+  try { renderP3(await post(API.p3 + '/api/v1/dossiers/review', {docs, dossier_id: 'web-demo'})); }
+  catch (e) { $('p3-out').innerHTML = `<div class="err">${esc(e.message)}</div>`; }
+};
+
+$('p2-in').value = SAMPLE_LABEL;
+$('p1-in').value = P1_DEMO;
+probe();
+setInterval(probe, 15000);
+</script>
+</body>
+</html>
